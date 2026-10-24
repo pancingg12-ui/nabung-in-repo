@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nabung-In</title>
+    <style>
+        :root {
+            --primary: #0284C7;
+            --primary-hover: #0369A1;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .btn-update {
+            background-color: #E0F2FE;
+            color: var(--primary);
+            border: none;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        input[type="number"], input[type="time"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .days-container {
+            display: flex;
+            gap: 6px;
+            justify-content: space-between;
+        }
+
+        .day-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: 1px solid var(--border-color);
+            background-color: #FFFFFF;
+            color: var(--text-muted);
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .day-btn.active {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Nabung-In</h1>
+        <button class="btn-update" onclick="checkUpdateFromAndroid()">Periksa Pembaruan</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Target & Nominal</div>
+        <div class="form-group">
+            <label>Target Tabungan (Rp)</label>
+            <input type="number" id="targetAmount" placeholder="Contoh: 100000000">
+        </div>
+        <div class="form-group">
+            <label>Frekuensi Nabung</label>
+            <select id="frequency">
+                <option value="daily">Harian</option>
+                <option value="weekly">Mingguan</option>
+                <option value="monthly">Bulanan</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Nominal Sekali Nabung (Rp)</label>
+            <input type="number" id="savingAmount" placeholder="Contoh: 50000">
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Jadwal Pengingat</div>
+        <div class="form-group">
+            <label>Pilih Hari Pengingat</label>
+            <div class="days-container">
+                <button class="day-btn" onclick="toggleDay(this, 2)">Sen</button>
+                <button class="day-btn" onclick="toggleDay(this, 3)">Sel</button>
+                <button class="day-btn" onclick="toggleDay(this, 4)">Rab</button>
+                <button class="day-btn" onclick="toggleDay(this, 5)">Kam</button>
+                <button class="day-btn" onclick="toggleDay(this, 6)">Jum</button>
+                <button class="day-btn" onclick="toggleDay(this, 7)">Sab</button>
+                <button class="day-btn" onclick="toggleDay(this, 1)">Min</button>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 14px;">
+            <label>Jam Pengingat</label>
+            <input type="time" id="reminderTime" value="12:00">
+        </div>
+    </div>
+
+    <button class="btn-primary" onclick="saveSettings()">Simpan Pengaturan</button>
+
+    <script>
+        let selectedDays = [];
+
+        function toggleDay(element, dayCode) {
+            element.classList.toggle('active');
+            if (selectedDays.includes(dayCode)) {
+                selectedDays = selectedDays.filter(d => d !== dayCode);
+            } else {
+                selectedDays.push(dayCode);
+            }
+        }
+
+        function saveSettings() {
+            const data = {
+                target: document.getElementById('targetAmount').value,
+                frequency: document.getElementById('frequency').value,
+                savingAmount: document.getElementById('savingAmount').value,
+                time: document.getElementById('reminderTime').value,
+                days: selectedDays
+            };
+
+            localStorage.setItem('nabung_settings', JSON.stringify(data));
+
+            if (window.AndroidInterface) {
+                window.AndroidInterface.scheduleNotification(JSON.stringify(data));
+            } else {
+                alert('Pengaturan disimpan (Mode Browser)!');
+            }
+        }
+
+        function checkUpdateFromAndroid() {
+            if (window.AndroidInterface) {
+                window.AndroidInterface.checkUpdate();
+            } else {
+                alert("Periksa pembaruan hanya bekerja di dalam APK Android.");
+            }
+        }
+    </script>
+</body>
+</html>
