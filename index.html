@@ -2,220 +2,545 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nabung-In</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nabung-In - Catatan Keuangan & Target</title>
+    <!-- Tailwind CSS untuk Desain Modern E-Wallet -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sky: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #0284C7;
-            --primary-hover: #0369A1;
-            --bg-color: #F8FAFC;
-            --card-bg: #FFFFFF;
-            --text-main: #0F172A;
-            --text-muted: #64748B;
-            --border-color: #E2E8F0;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 20px;
-            max-width: 480px;
-            margin: 0 auto;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
         }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-
-        .header h1 {
-            font-size: 22px;
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .btn-update {
-            background-color: #E0F2FE;
-            color: var(--primary);
-            border: none;
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-            margin-bottom: 16px;
-            border: 1px solid var(--border-color);
-        }
-
-        .card-title {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 14px;
-            text-transform: uppercase;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        label {
-            display: block;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-
-        input[type="number"], input[type="time"], select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .days-container {
-            display: flex;
-            gap: 6px;
-            justify-content: space-between;
-        }
-
-        .day-btn {
-            flex: 1;
-            padding: 10px 0;
-            border: 1px solid var(--border-color);
-            background-color: #FFFFFF;
-            color: var(--text-muted);
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .day-btn.active {
-            background-color: var(--primary);
-            color: #FFFFFF;
-            border-color: var(--primary);
-        }
-
-        .btn-primary {
-            width: 100%;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen flex justify-center">
 
-    <div class="header">
-        <h1>Nabung-In</h1>
-        <button class="btn-update" onclick="checkUpdateFromAndroid()">Periksa Pembaruan</button>
-    </div>
+    <!-- Container Utama Mobile-First -->
+    <div class="w-full max-w-md bg-white min-h-screen flex flex-col shadow-xl relative overflow-hidden pb-20">
 
-    <div class="card">
-        <div class="card-title">Target & Nominal</div>
-        <div class="form-group">
-            <label>Target Tabungan (Rp)</label>
-            <input type="number" id="targetAmount" placeholder="Contoh: 100000000">
-        </div>
-        <div class="form-group">
-            <label>Frekuensi Nabung</label>
-            <select id="frequency">
-                <option value="daily">Harian</option>
-                <option value="weekly">Mingguan</option>
-                <option value="monthly">Bulanan</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Nominal Sekali Nabung (Rp)</label>
-            <input type="number" id="savingAmount" placeholder="Contoh: 50000">
-        </div>
-    </div>
+        <!-- HEADER / NAVBAR -->
+        <header class="bg-gradient-to-r from-sky-600 to-sky-500 text-white p-5 rounded-b-3xl shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <p class="text-xs text-sky-100 font-medium">Dompet Digital Pribadi</p>
+                    <h1 class="text-2xl font-bold tracking-tight">Nabung-In 🎯</h1>
+                </div>
+                <button onclick="openNewVaultModal()" class="bg-white/20 hover:bg-white/30 text-white p-2.5 rounded-full text-sm font-medium backdrop-blur-sm transition flex items-center gap-1.5 px-3">
+                    <i class="fa-solid fa-plus"></i> Tabungan Baru
+                </button>
+            </div>
 
-    <div class="card">
-        <div class="card-title">Jadwal Pengingat</div>
-        <div class="form-group">
-            <label>Pilih Hari Pengingat</label>
-            <div class="days-container">
-                <button class="day-btn" onclick="toggleDay(this, 2)">Sen</button>
-                <button class="day-btn" onclick="toggleDay(this, 3)">Sel</button>
-                <button class="day-btn" onclick="toggleDay(this, 4)">Rab</button>
-                <button class="day-btn" onclick="toggleDay(this, 5)">Kam</button>
-                <button class="day-btn" onclick="toggleDay(this, 6)">Jum</button>
-                <button class="day-btn" onclick="toggleDay(this, 7)">Sab</button>
-                <button class="day-btn" onclick="toggleDay(this, 1)">Min</button>
+            <!-- CARD TOTAL KESELURUHAN -->
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                <div class="flex justify-between items-center text-xs text-sky-100 mb-1">
+                    <span>Total Seluruh Tabungan</span>
+                    <span id="active-vault-badge" class="bg-white/20 px-2 py-0.5 rounded-md font-semibold">Semua Pos</span>
+                </div>
+                <div class="text-2xl font-bold mb-2" id="total-all-balance">Rp 0</div>
+                <div class="w-full bg-black/10 rounded-full h-2 overflow-hidden">
+                    <div id="total-all-progress" class="bg-white h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between items-center text-[11px] text-sky-100 mt-1.5">
+                    <span id="total-all-target-label">Target: Rp 0</span>
+                    <span id="total-all-percent">0% Tercapai</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- PILIHAN POS TABUNGAN (HORIZONTAL SCROLL) -->
+        <section class="px-5 mt-4">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Daftar Pos Tabungan</h2>
+                <span class="text-xs text-sky-600 font-semibold cursor-pointer" onclick="switchVault('all')">Tampilkan Semua</span>
+            </div>
+            <div id="vaults-container" class="flex gap-3 overflow-x-auto hide-scrollbar pb-1">
+                <!-- Render via JS -->
+            </div>
+        </section>
+
+        <!-- KONTEN UTAMA HALAMAN -->
+        <main class="flex-1 px-5 mt-4 space-y-5">
+
+            <!-- TAB 1: DASHBOARD DETAIL POS TERPILIH -->
+            <div id="tab-dashboard" class="space-y-4">
+                <!-- Detail Card Pos Aktif -->
+                <div class="bg-sky-50 border border-sky-100 rounded-2xl p-4">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <span class="text-[10px] font-bold text-sky-600 bg-sky-200/50 px-2 py-0.5 rounded uppercase" id="current-vault-category">Kategori</span>
+                            <h3 class="text-lg font-bold text-slate-800 mt-1" id="current-vault-name">Pilih Pos Tabungan</h3>
+                        </div>
+                        <div class="flex gap-1">
+                            <button onclick="openEditVaultModal()" class="w-8 h-8 rounded-full bg-white text-slate-600 flex items-center justify-center shadow-sm hover:bg-slate-100"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteCurrentVault()" class="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shadow-sm hover:bg-rose-100"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 pt-2 border-t border-sky-100">
+                        <div>
+                            <p class="text-[11px] text-slate-500">Terkumpul</p>
+                            <p class="text-base font-bold text-sky-700" id="current-vault-balance">Rp 0</p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-slate-500">Target Impian</p>
+                            <p class="text-base font-bold text-slate-700" id="current-vault-target">Rp 0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Setor / Tarik Cepat -->
+                <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-3">Catat Transaksi Tabungan</h3>
+                    <form id="transaction-form" onsubmit="handleTransaction(event)" class="space-y-3">
+                        <div>
+                            <select id="trx-type" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-700 focus:outline-none focus:border-sky-500">
+                                <option value="deposit">➕ Menabung (Setor)</option>
+                                <option value="withdraw">➖ Ambil Tabungan (Tarik)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input type="number" id="trx-amount" placeholder="Nominal (Contoh: 50000)" required
+                                class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-700 focus:outline-none focus:border-sky-500">
+                        </div>
+                        <div>
+                            <input type="text" id="trx-note" placeholder="Catatan (Misal: Sisa uang jajan)" 
+                                class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-700 focus:outline-none focus:border-sky-500">
+                        </div>
+                        <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-3 rounded-xl transition shadow-md shadow-sky-500/20">
+                            Simpan Transaksi
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 2: RIWAYAT TRANSAKSI -->
+            <div id="tab-history" class="hidden space-y-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-slate-800">Riwayat Transaksi</h3>
+                    <button onclick="clearHistory()" class="text-[11px] text-rose-500 font-semibold hover:underline">Hapus Riwayat</button>
+                </div>
+                <div id="history-list" class="space-y-2">
+                    <!-- Render via JS -->
+                </div>
+            </div>
+
+            <!-- TAB 3: SIMULASI & PENGINGAT -->
+            <div id="tab-reminder" class="hidden space-y-4">
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-4 shadow-lg">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-calculator text-sky-400"></i>
+                        <h3 class="text-sm font-bold">Kalkulator Simulasi Nabung</h3>
+                    </div>
+                    <p class="text-xs text-slate-300 mb-3">Hitung berapa lama waktu yang dibutuhkan untuk mencapai target impianmu.</p>
+                    <div class="space-y-2.5">
+                        <input type="number" id="sim-target" placeholder="Total Target (Rp)" class="w-full text-xs bg-white/10 border border-white/20 rounded-xl p-2.5 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400">
+                        <input type="number" id="sim-routine" placeholder="Rencana Nabung Rutin (Rp)" class="w-full text-xs bg-white/10 border border-white/20 rounded-xl p-2.5 text-white placeholder-slate-400 focus:outline-none focus:border-sky-400">
+                        <select id="sim-freq" class="w-full text-xs bg-slate-800 border border-white/20 rounded-xl p-2.5 text-white focus:outline-none focus:border-sky-400">
+                            <option value="daily">Setiap Hari</option>
+                            <option value="weekly">Setiap Minggu</option>
+                            <option value="monthly">Setiap Bulan</option>
+                        </select>
+                        <button type="button" onclick="calculateSimulation()" class="w-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold py-2.5 rounded-xl transition">
+                            Hitung Estimasi
+                        </button>
+                    </div>
+                    <div id="sim-result" class="mt-3 text-xs text-sky-200 hidden bg-white/10 p-3 rounded-xl border border-white/10"></div>
+                </div>
+
+                <!-- Simulasi Reminder Notifikasi -->
+                <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-800">Simulasi Pengingat Harian</h3>
+                            <p class="text-[11px] text-slate-500">Notifikasi browser otomatis</p>
+                        </div>
+                        <input type="checkbox" id="reminder-toggle" onchange="toggleReminder(this)" class="w-5 h-5 accent-sky-600 cursor-pointer">
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Aktifkan untuk menerima simulasi pesan pengingat agar rajin menabung setiap hari.</p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- BOTTOM NAVIGATION BAR -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-100 py-3 px-6 flex justify-around items-center z-10 shadow-lg">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="flex flex-col items-center gap-1 text-sky-600 transition">
+                <i class="fa-solid fa-wallet text-base"></i>
+                <span class="text-[10px] font-semibold">Tabungan</span>
+            </button>
+            <button onclick="switchTab('history')" id="nav-history" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition">
+                <i class="fa-solid fa-clock-rotate-left text-base"></i>
+                <span class="text-[10px] font-semibold">Riwayat</span>
+            </button>
+            <button onclick="switchTab('reminder')" id="nav-reminder" class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition">
+                <i class="fa-solid fa-bell text-base"></i>
+                <span class="text-[10px] font-semibold">Simulasi & Target</span>
+            </button>
+        </nav>
+
+        <!-- MODAL: TAMBAH POS TABUNGAN BARU -->
+        <div id="modal-vault" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-5">
+            <div class="bg-white w-full max-w-sm rounded-3xl p-5 shadow-2xl space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-base font-bold text-slate-800" id="modal-vault-title">Buat Pos Tabungan Baru</h3>
+                    <button onclick="closeNewVaultModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <form id="vault-form" onsubmit="saveVault(event)" class="space-y-3">
+                    <input type="hidden" id="vault-edit-id">
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-500 block mb-1">Nama Impian / Pos</label>
+                        <input type="text" id="vault-name" placeholder="Misal: Beli Laptop Baru" required
+                            class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-700 focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-500 block mb-1">Target Nominal (Rp)</label>
+                        <input type="number" id="vault-target" placeholder="Misal: 7000000" required
+                            class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-700 focus:outline-none focus:border-sky-500">
+                    </div>
+                    <div>
+                        <label class="text-[11px] font-semibold text-slate-500 block mb-1">Kategori</label>
+                        <select id="vault-category" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl p-2.5 font-medium text-slate-700 focus:outline-none focus:border-sky-500">
+                            <option value="Gadget & Elektronik">💻 Gadget & Elektronik</option>
+                            <option value="Liburan & Traveling">✈️ Liburan & Traveling</option>
+                            <option value="Dana Darurat">🛡️ Dana Darurat</option>
+                            <option value="Kendaraan">🚗 Kendaraan</option>
+                            <option value="Lainnya">⭐ Lainnya</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-3 rounded-xl transition shadow-md shadow-sky-500/20">
+                        Simpan Pos Tabungan
+                    </button>
+                </form>
             </div>
         </div>
 
-        <div class="form-group" style="margin-top: 14px;">
-            <label>Jam Pengingat</label>
-            <input type="time" id="reminderTime" value="12:00">
-        </div>
     </div>
 
-    <button class="btn-primary" onclick="saveSettings()">Simpan Pengaturan</button>
-
+    <!-- JAVASCRIPT LOGIKA APLIKASI -->
     <script>
-        let selectedDays = [];
+        // State Data Utama
+        let vaults = JSON.parse(localStorage.getItem('nabung_in_vaults')) || [
+            { id: '1', name: 'Dana Darurat', target: 5000000, category: 'Dana Darurat' },
+            { id: '2', name: 'Beli Laptop Impian', target: 8500000, category: 'Gadget & Elektronik' }
+        ];
 
-        function toggleDay(element, dayCode) {
-            element.classList.toggle('active');
-            if (selectedDays.includes(dayCode)) {
-                selectedDays = selectedDays.filter(d => d !== dayCode);
+        let transactions = JSON.parse(localStorage.getItem('nabung_in_transactions')) || [
+            { id: 't1', vaultId: '1', type: 'deposit', amount: 500000, note: 'Tabungan awal bulan', date: '2026-06-01' },
+            { id: 't2', vaultId: '2', type: 'deposit', amount: 1000000, note: 'Gajian pertama', date: '2026-06-02' }
+        ];
+
+        let activeVaultId = 'all'; // 'all' atau ID vault tertentu
+
+        // Format Rupiah
+        function formatRupiah(number) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        }
+
+        // Inisialisasi Saat Aplikasi Dibuka
+        document.addEventListener('DOMContentLoaded', () => {
+            renderVaults();
+            updateDashboard();
+            renderHistory();
+        });
+
+        // Navigasi Tab Bawah
+        function switchTab(tabName) {
+            ['dashboard', 'history', 'reminder'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).className = "flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition";
+            });
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabName}`).className = "flex flex-col items-center gap-1 text-sky-600 transition";
+        }
+
+        // Switch Pos Tabungan
+        function switchVault(vaultId) {
+            activeVaultId = vaultId;
+            renderVaults();
+            updateDashboard();
+        }
+
+        // Render Kartu Pos Tabungan
+        function renderVaults() {
+            const container = document.getElementById('vaults-container');
+            let html = `
+                <div onclick="switchVault('all')" class="min-w-[110px] p-3 rounded-2xl cursor-pointer border transition ${activeVaultId === 'all' ? 'bg-sky-600 text-white border-sky-600 shadow-md shadow-sky-500/20' : 'bg-white text-slate-700 border-slate-100 hover:border-slate-200'}">
+                    <p class="text-[10px] font-medium opacity-80">Semua Pos</p>
+                    <p class="text-xs font-bold mt-1 truncate">Gabungan</p>
+                </div>
+            `;
+
+            vaults.forEach(v => {
+                const vTrx = transactions.filter(t => t.vaultId === v.id);
+                const vBal = vTrx.reduce((acc, curr) => curr.type === 'deposit' ? acc + curr.amount : acc - curr.amount, 0);
+                const isSelected = activeVaultId === v.id;
+
+                html += `
+                    <div onclick="switchVault('${v.id}')" class="min-w-[130px] p-3 rounded-2xl cursor-pointer border transition ${isSelected ? 'bg-sky-600 text-white border-sky-600 shadow-md shadow-sky-500/20' : 'bg-white text-slate-700 border-slate-100 hover:border-slate-200'}">
+                        <p class="text-[10px] font-medium opacity-80 truncate">${v.category}</p>
+                        <p class="text-xs font-bold mt-1 truncate">${v.name}</p>
+                        <p class="text-[11px] font-semibold mt-2 ${isSelected ? 'text-sky-100' : 'text-sky-600'}">${formatRupiah(vBal)}</p>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Update Dashboard Keseluruhan & Detail
+        function updateDashboard() {
+            // Hitung Total Seluruh
+            let totalAllBal = 0;
+            let totalAllTarget = 0;
+
+            vaults.forEach(v => {
+                totalAllTarget += Number(v.target);
+                const vTrx = transactions.filter(t => t.vaultId === v.id);
+                const vBal = vTrx.reduce((acc, curr) => curr.type === 'deposit' ? acc + curr.amount : acc - curr.amount, 0);
+                totalAllBal += vBal;
+            });
+
+            const totalAllPercent = totalAllTarget > 0 ? Math.min(Math.round((totalAllBal / totalAllTarget) * 100), 100) : 0;
+            
+            document.getElementById('total-all-balance').innerText = formatRupiah(totalAllBal);
+            document.getElementById('total-all-target-label').innerText = `Target: ${formatRupiah(totalAllTarget)}`;
+            document.getElementById('total-all-percent').innerText = `${totalAllPercent}% Tercapai`;
+            document.getElementById('total-all-progress').style.width = `${totalAllPercent}%`;
+
+            // Update Tampilan Berdasarkan Pos Aktif
+            if (activeVaultId === 'all') {
+                document.getElementById('active-vault-badge').innerText = 'Semua Pos';
+                document.getElementById('current-vault-category').innerText = 'Ringkasan Global';
+                document.getElementById('current-vault-name').innerText = 'Total Semua Tabungan';
+                document.getElementById('current-vault-balance').innerText = formatRupiah(totalAllBal);
+                document.getElementById('current-vault-target').innerText = formatRupiah(totalAllTarget);
             } else {
-                selectedDays.push(dayCode);
+                const vault = vaults.find(v => v.id === activeVaultId);
+                if (vault) {
+                    const vTrx = transactions.filter(t => t.vaultId === vault.id);
+                    const vBal = vTrx.reduce((acc, curr) => curr.type === 'deposit' ? acc + curr.amount : acc - curr.amount, 0);
+                    
+                    document.getElementById('active-vault-badge').innerText = vault.name;
+                    document.getElementById('current-vault-category').innerText = vault.category;
+                    document.getElementById('current-vault-name').innerText = vault.name;
+                    document.getElementById('current-vault-balance').innerText = formatRupiah(vBal);
+                    document.getElementById('current-vault-target').innerText = formatRupiah(vault.target);
+                }
             }
         }
 
-        function saveSettings() {
-            const data = {
-                target: document.getElementById('targetAmount').value,
-                frequency: document.getElementById('frequency').value,
-                savingAmount: document.getElementById('savingAmount').value,
-                time: document.getElementById('reminderTime').value,
-                days: selectedDays
+        // Handle Input Transaksi
+        function handleTransaction(e) {
+            e.preventDefault();
+            if (activeVaultId === 'all') {
+                alert('Silakan pilih salah satu pos tabungan spesifik terlebih dahulu sebelum mencatat transaksi!');
+                return;
+            }
+
+            const type = document.getElementById('trx-type').value;
+            const amount = Number(document.getElementById('trx-amount').value);
+            const note = document.getElementById('trx-note').value || (type === 'deposit' ? 'Setor tabungan' : 'Tarik tabungan');
+            const date = new Date().toISOString().split('T')[0];
+
+            const newTrx = {
+                id: 't_' + Date.now(),
+                vaultId: activeVaultId,
+                type,
+                amount,
+                note,
+                date
             };
 
-            localStorage.setItem('nabung_settings', JSON.stringify(data));
+            transactions.unshift(newTrx);
+            localStorage.setItem('nabung_in_transactions', JSON.stringify(transactions));
 
-            if (window.AndroidInterface) {
-                window.AndroidInterface.scheduleNotification(JSON.stringify(data));
-            } else {
-                alert('Pengaturan disimpan (Mode Browser)!');
+            document.getElementById('transaction-form').reset();
+            updateDashboard();
+            renderHistory();
+            renderVaults();
+            alert('Transaksi berhasil disimpan! 🎉');
+        }
+
+        // Render Riwayat Transaksi
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            let filteredTrx = activeVaultId === 'all' ? transactions : transactions.filter(t => t.vaultId === activeVaultId);
+
+            if (filteredTrx.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400 text-center py-5">Belum ada riwayat transaksi pada pos ini.</p>`;
+                return;
+            }
+
+            let html = '';
+            filteredTrx.forEach(t => {
+                const vault = vaults.find(v => v.id === t.vaultId);
+                const vaultName = vault ? vault.name : 'Pos Dihapus';
+                const isDeposit = t.type === 'deposit';
+
+                html += `
+                    <div class="bg-white border border-slate-100 rounded-xl p-3 flex justify-between items-center shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full ${isDeposit ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} flex items-center justify-center font-bold">
+                                <i class="fa-solid ${isDeposit ? 'fa-arrow-down' : 'fa-arrow-up'} text-xs"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800">${t.note}</h4>
+                                <p class="text-[10px] text-slate-400">${vaultName} • ${t.date}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-bold ${isDeposit ? 'text-emerald-600' : 'text-rose-600'}">
+                                ${isDeposit ? '+' : '-'} ${formatRupiah(t.amount)}
+                            </p>
+                        </div>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function clearHistory() {
+            if (confirm('Yakin ingin menghapus seluruh riwayat transaksi?')) {
+                transactions = activeVaultId === 'all' ? [] : transactions.filter(t => t.vaultId !== activeVaultId);
+                localStorage.setItem('nabung_in_transactions', JSON.stringify(transactions));
+                updateDashboard();
+                renderHistory();
+                renderVaults();
             }
         }
 
-        function checkUpdateFromAndroid() {
-            if (window.AndroidInterface) {
-                window.AndroidInterface.checkUpdate();
+        // Modal Kelola Pos Tabungan
+        function openNewVaultModal() {
+            document.getElementById('modal-vault-title').innerText = 'Buat Pos Tabungan Baru';
+            document.getElementById('vault-form').reset();
+            document.getElementById('vault-edit-id').value = '';
+            document.getElementById('modal-vault').classList.remove('hidden');
+        }
+
+        function openEditVaultModal() {
+            if (activeVaultId === 'all') {
+                alert('Pilih pos tabungan tertentu yang ingin diedit.');
+                return;
+            }
+            const vault = vaults.find(v => v.id === activeVaultId);
+            if (vault) {
+                document.getElementById('modal-vault-title').innerText = 'Edit Pos Tabungan';
+                document.getElementById('vault-edit-id').value = vault.id;
+                document.getElementById('vault-name').value = vault.name;
+                document.getElementById('vault-target').value = vault.target;
+                document.getElementById('vault-category').value = vault.category;
+                document.getElementById('modal-vault').classList.remove('hidden');
+            }
+        }
+
+        function closeNewVaultModal() {
+            document.getElementById('modal-vault').classList.add('hidden');
+        }
+
+        function saveVault(e) {
+            e.preventDefault();
+            const idEdit = document.getElementById('vault-edit-id').value;
+            const name = document.getElementById('vault-name').value;
+            const target = Number(document.getElementById('vault-target').value);
+            const category = document.getElementById('vault-category').value;
+
+            if (idEdit) {
+                const v = vaults.find(item => item.id === idEdit);
+                if (v) {
+                    v.name = name;
+                    v.target = target;
+                    v.category = category;
+                }
             } else {
-                alert("Periksa pembaruan hanya bekerja di dalam APK Android.");
+                const newVault = {
+                    id: 'v_' + Date.now(),
+                    name,
+                    target,
+                    category
+                };
+                vaults.push(newVault);
+                activeVaultId = newVault.id;
+            }
+
+            localStorage.setItem('nabung_in_vaults', JSON.stringify(vaults));
+            closeNewVaultModal();
+            renderVaults();
+            updateDashboard();
+            renderHistory();
+        }
+
+        function deleteCurrentVault() {
+            if (activeVaultId === 'all') {
+                alert('Pilih pos tabungan spesifik yang ingin dihapus.');
+                return;
+            }
+            if (confirm('Yakin ingin menghapus pos tabungan ini beserta seluruh riwayat transaksinya?')) {
+                vaults = vaults.filter(v => v.id !== activeVaultId);
+                transactions = transactions.filter(t => t.vaultId !== activeVaultId);
+                localStorage.setItem('nabung_in_vaults', JSON.stringify(vaults));
+                localStorage.setItem('nabung_in_transactions', JSON.stringify(transactions));
+                activeVaultId = 'all';
+                renderVaults();
+                updateDashboard();
+                renderHistory();
+            }
+        }
+
+        // Kalkulator Simulasi
+        function calculateSimulation() {
+            const target = Number(document.getElementById('sim-target').value);
+            const routine = Number(document.getElementById('sim-routine').value);
+            const freq = document.getElementById('sim-freq').value;
+            const resDiv = document.getElementById('sim-result');
+
+            if (!target || !routine || routine <= 0) {
+                alert('Masukkan target dan nominal rutin dengan benar!');
+                return;
+            }
+
+            const periodsNeeded = Math.ceil(target / routine);
+            let text = '';
+            if (freq === 'daily') text = `Butuh waktu sekitar <b>${periodsNeeded} hari</b> (${(periodsNeeded/30).toFixed(1)} bulan) menabung setiap hari.`;
+            if (freq === 'weekly') text = `Butuh waktu sekitar <b>${periodsNeeded} minggu</b> (${(periodsNeeded/4).toFixed(1)} bulan) menabung setiap minggu.`;
+            if (freq === 'monthly') text = `Butuh waktu sekitar <b>${periodsNeeded} bulan</b> (${(periodsNeeded/12).toFixed(1)} tahun) menabung setiap bulan.`;
+
+            resDiv.innerHTML = text;
+            resDiv.classList.remove('hidden');
+        }
+
+        // Simulasi Reminder Harian
+        function toggleReminder(el) {
+            if (el.checked) {
+                alert('Simulasi Pengingat Aktif! 🔔 Anda akan menerima simulasi notifikasi harian untuk menabung.');
+            } else {
+                alert('Pengingat dimatikan.');
             }
         }
     </script>
