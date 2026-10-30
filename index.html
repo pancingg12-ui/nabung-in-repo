@@ -1,1 +1,571 @@
-p
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nabung-In</title>
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --primary-light: #e0f2fe;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: auto;
+            padding-bottom: 30px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .btn-icon {
+            background: var(--primary-light);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--primary);
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:active {
+            transform: scale(0.95);
+        }
+
+        /* Summary Card */
+        .summary-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 22px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .summary-card p {
+            margin: 0;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            opacity: 0.9;
+        }
+
+        .summary-card h2 {
+            margin: 6px 0 0 0;
+            font-size: 30px;
+            font-weight: 800;
+        }
+
+        /* Section Title & Action */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .section-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+        }
+
+        /* Target Cards List */
+        .target-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .target-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            transition: all 0.2s;
+        }
+
+        .target-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .target-title {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-main);
+            margin: 0 0 2px 0;
+        }
+
+        .target-amounts {
+            text-align: right;
+        }
+
+        .current-amt {
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        .target-amt {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Bar */
+        .progress-bar-bg {
+            background: var(--border);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.4s ease;
+        }
+
+        /* Target Actions */
+        .target-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .target-actions button {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-deposit {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #ef4444;
+            max-width: 40px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        /* Modal Custom */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            box-sizing: border-box;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 380px;
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--text-main);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+            outline: none;
+            background: #fafafa;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .btn-update-check {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-update-check:active {
+            background: #bae6fd;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Nabung-In</h1>
+            <button class="btn-icon" onclick="toggleModal('settingsModal', true)" title="Pengaturan">⚙️</button>
+        </div>
+        
+        <!-- Total Keseluruhan Card -->
+        <div class="summary-card">
+            <p>Akumulasi Total Tabungan</p>
+            <h2 id="totalSemuaTabungan">Rp 0</h2>
+        </div>
+
+        <!-- Daftar Target Tabungan -->
+        <div class="section-header">
+            <h3>Target Impian Anda</h3>
+            <button class="btn-add" onclick="openAddTargetModal()">+ Tambah Target</button>
+        </div>
+
+        <div class="target-list" id="targetListContainer">
+            <!-- Render Target via JS -->
+        </div>
+    </div>
+
+    <!-- Modal Tambah Target Baru -->
+    <div class="modal" id="addTargetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Buat Target Baru</h3>
+                <button class="close-btn" onclick="toggleModal('addTargetModal', false)">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Nama Target (Cth: Laptop Baru)</label>
+                <input type="text" id="targetNameInput" placeholder="Masukkan nama barang/tujuan" />
+            </div>
+            <div class="form-group">
+                <label>Harga Tujuan (Target Nominal)</label>
+                <input type="number" id="targetGoalInput" placeholder="Cth: 5000000" />
+            </div>
+            <button class="btn-submit" onclick="saveNewTarget()">Simpan Target</button>
+        </div>
+    </div>
+
+    <!-- Modal Setor Tabungan -->
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tambah Tabungan</h3>
+                <button class="close-btn" onclick="toggleModal('depositModal', false)">&times;</button>
+            </div>
+            <input type="hidden" id="activeTargetId">
+            <div class="form-group">
+                <label>Nominal Setoran</label>
+                <input type="number" id="depositNominalInput" placeholder="Cth: 50000" />
+            </div>
+            <div class="form-group">
+                <label>Keterangan (Opsional)</label>
+                <input type="text" id="depositNoteInput" placeholder="Cth: Sisa uang jajan" />
+            </div>
+            <button class="btn-submit" onclick="processDeposit()">Masukkan Tabungan</button>
+        </div>
+    </div>
+
+    <!-- Modal Settings & Versi -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Pengaturan & Informasi</h3>
+                <button class="close-btn" onclick="toggleModal('settingsModal', false)">&times;</button>
+            </div>
+            <div class="info-row">
+                <span>Aplikasi</span>
+                <span>Nabung-In Multi-Target</span>
+            </div>
+            <div class="info-row">
+                <span>Versi UI HTML</span>
+                <span id="appVersionDisplay">v2.0 (Live OTA)</span>
+            </div>
+            <div class="info-row">
+                <span>Penyimpanan</span>
+                <span>Lokal Aman (Device)</span>
+            </div>
+            
+            <!-- Tombol Periksa Update Manual -->
+            <button class="btn-update-check" onclick="checkManualUpdate()">🔄 Periksa Pembaruan</button>
+
+            <div style="margin-top: 16px; text-align: center;">
+                <small style="color: var(--text-secondary);">Sistem Pembaruan Otomatis Aktif</small>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let targets = JSON.parse(localStorage.getItem('nabung_in_targets')) || [];
+
+        function render() {
+            const container = document.getElementById('targetListContainer');
+            const totalSemuaEl = document.getElementById('totalSemuaTabungan');
+            container.innerHTML = '';
+
+            let grandTotal = 0;
+
+            if (targets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        Belum ada target impian.<br>Yuk ketuk tombol <b>+ Tambah Target</b> di atas untuk mulai menabung!
+                    </div>
+                `;
+            } else {
+                targets.forEach((target) => {
+                    let currentTotal = target.history.reduce((sum, item) => sum + Number(item.nominal), 0);
+                    grandTotal += currentTotal;
+
+                    let percent = target.goal > 0 ? Math.min(Math.round((currentTotal / target.goal) * 100), 100) : 0;
+
+                    const card = document.createElement('div');
+                    card.className = 'target-card';
+                    card.innerHTML = `
+                        <div class="target-info">
+                            <div>
+                                <p class="target-title">🎯 ${target.name}</p>
+                                <small style="color: var(--text-secondary);">${percent}% Tercapai</small>
+                            </div>
+                            <div class="target-amounts">
+                                <div class="current-amt">Rp ${currentTotal.toLocaleString('id-ID')}</div>
+                                <div class="target-amt">dari Rp ${Number(target.goal).toLocaleString('id-ID')}</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: ${percent}%;"></div>
+                        </div>
+                        <div class="target-actions">
+                            <button class="btn-deposit" onclick="openDepositModal('${target.id}')">+ Nabung</button>
+                            <button class="btn-delete" onclick="deleteTarget('${target.id}')" title="Hapus Target">🗑️</button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            totalSemuaEl.innerText = 'Rp ' + grandTotal.toLocaleString('id-ID');
+        }
+
+        function toggleModal(modalId, show) {
+            document.getElementById(modalId).style.display = show ? 'flex' : 'none';
+        }
+
+        function openAddTargetModal() {
+            document.getElementById('targetNameInput').value = '';
+            document.getElementById('targetGoalInput').value = '';
+            toggleModal('addTargetModal', true);
+        }
+
+        function saveNewTarget() {
+            const name = document.getElementById('targetNameInput').value.trim();
+            const goal = document.getElementById('targetGoalInput').value;
+
+            if (!name || !goal || goal <= 0) {
+                alert('Nama target dan harga tujuan harus diisi dengan benar!');
+                return;
+            }
+
+            const newTarget = {
+                id: 'target_' + Date.now(),
+                name: name,
+                goal: Number(goal),
+                history: []
+            };
+
+            targets.push(newTarget);
+            localStorage.setItem('nabung_in_targets', JSON.stringify(targets));
+            toggleModal('addTargetModal', false);
+            render();
+        }
+
+        function openDepositModal(targetId) {
+            document.getElementById('activeTargetId').value = targetId;
+            document.getElementById('depositNominalInput').value = '';
+            document.getElementById('depositNoteInput').value = '';
+            toggleModal('depositModal', true);
+        }
+
+        function processDeposit() {
+            const targetId = document.getElementById('activeTargetId').value;
+            const nominal = document.getElementById('depositNominalInput').value;
+            const note = document.getElementById('depositNoteInput').value.trim();
+
+            if (!nominal || nominal <= 0) {
+                alert('Masukkan nominal setoran yang valid!');
+                return;
+            }
+
+            const target = targets.find(t => t.id === targetId);
+            if (target) {
+                const tanggal = new Date().toLocaleDateString('id-ID', { 
+                    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+
+                target.history.unshift({
+                    nominal: Number(nominal),
+                    note: note || 'Setoran Tabungan',
+                    date: tanggal
+                });
+
+                localStorage.setItem('nabung_in_targets', JSON.stringify(targets));
+                toggleModal('depositModal', false);
+                render();
+            }
+        }
+
+        function deleteTarget(targetId) {
+            if (confirm('Yakin ingin menghapus target ini beserta riwayat tabungannya?')) {
+                targets = targets.filter(t => t.id !== targetId);
+                localStorage.setItem('nabung_in_targets', JSON.stringify(targets));
+                render();
+            }
+        }
+
+        function checkManualUpdate() {
+            alert('Silakan gunakan tombol utama di luar aplikasi atau restart aplikasi untuk memicu pengecekan update otomatis.');
+        }
+
+        // Tampilkan versi OTA
+        const currentVersion = localStorage.getItem('html_version') || '1';
+        document.getElementById('appVersionDisplay').innerText = 'v' + currentVersion + '.0 (OTA)';
+
+        render();
+    </script>
+</body>
+</html>
+
